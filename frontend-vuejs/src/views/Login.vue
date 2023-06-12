@@ -34,15 +34,7 @@ export default {
         };
     },
     computed:{
-        reloadPage(){
-            this.$router.go(0);  //refresh page
-        },
-
-        logged(){
-            // this.show = JSON.parse(localStorage.getItem("user"));
-            // return this.show;
-            return JSON.parse(localStorage.getItem("user_Login")).result;
-        }
+        
     },
     mounted() {
  

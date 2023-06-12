@@ -14,6 +14,8 @@ const routes = [
     { path: "/stock", component: () => import('../views/Stock.vue') },
     { path: "/product", component: () => import('../views/Product.vue') },
     { path: "/account", component: () => import('../views/Account.vue') },
+    { path: "/resetpassword", component: () => import('../views/ResetPass.vue') },
+
 ]
 
 const router = new VueRouter({

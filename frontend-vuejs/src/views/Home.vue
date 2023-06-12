@@ -24,10 +24,18 @@
                 return JSON.parse(localStorage.getItem("user_Login"));
             },
             isAdmin(){
-            if(this.haveUser.role == 'admin'){
-                return true;
+                if(!this.haveUser){
+                    return false;
+                }
+                else{
+                    if(this.haveUser.role != 'admin'){
+                        return false;
+                    }
+                    else{
+                        return true;
+                    }
+                }
             }
-        }
         },
         mounted(){
             this.isAdmin;

@@ -8,4 +8,6 @@ module.exports = function (app) {
     app.get('/showUser/:username', controller.showUser);
     app.post('/delete', controller.delete);
     app.post('/update', controller.update);
+
+    app.post('/resetPassword', controller.rePassword);
 }

@@ -54,19 +54,27 @@ export default {
         todos: [],
       };
     },
+    computed:{
+        haveUser(){
+            return JSON.parse(localStorage.getItem("user_Login"));
+        }
+    },
     mounted() {
-      onSnapshot(dbCollection, (query) => {
-        const result = [];
-        query.forEach((doc) => {
-          const todo = {
-            id: doc.id,
-            content: doc.data().content,
-            done: doc.data().done,
-          };
-          result.push(todo);
+        // if(!this.haveUser){
+        //     this.$router.push("/login")
+        // }
+        onSnapshot(dbCollection, (query) => {
+            const result = [];
+            query.forEach((doc) => {
+            const todo = {
+                id: doc.id,
+                content: doc.data().content,
+                done: doc.data().done,
+            };
+            result.push(todo);
+            });
+            this.todos = result;
         });
-        this.todos = result;
-      });
     },
   
     methods: {

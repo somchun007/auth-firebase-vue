@@ -70,8 +70,10 @@ export default {
   },
   computed:{
     haveUser(){
+      // this.$router.go(0);
       return JSON.parse(localStorage.getItem("user_Login"));
     },
+    
   },
   mounted(){
     if(!this.haveUser){
@@ -92,9 +94,12 @@ export default {
       .then((result) => {
         if(result.isConfirmed){
           localStorage.clear();
-          // localStorage.removeItem("user_Login");
-          this.$router.go(0);
-          // window.setTimeout(this.$router.go(0), 2000);
+          
+          // this.$router.push("/login")
+            this.$router.go(0)
+          
+          
+          // window.setTimeout(this.$router.go(0), 5000)
         }
       })
             

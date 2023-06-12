@@ -4,12 +4,15 @@ const moment = require('moment');
 require('moment-timezone');
 moment.locale('th');
 
+const nodemailer = require('nodemailer');
+const {v4 : uuidv4} = require('uuid')
+
 exports.signup = async (req, res) => {
     const { username, password, email, firstname, lastname } = req.body;
     const snapshot = await db.collection('user').where('email', '!=', email).get();
     if (snapshot.empty) {
         console.log('No matching documents.');
-        return res.status(400).send({ status: "failed", message: "อีเมล์มีในระบบแล้ว!" });
+        return res.status(400).send({ status: "failed", message: "อีเมลมีในระบบแล้ว!" });
     }
     var addData = {
         username: username,
@@ -151,4 +154,48 @@ exports.showUser = async (req, res) =>{
     })
     // console.log(result);
     return res.status(200).send({status: "ok", result});
+}
+
+
+exports.rePassword = async (req, res) => {
+    const { email } = req.body;
+    const snapshot = await db.collection('user').where('email', '!=', email).get();
+    if (snapshot.empty) {
+        console.log('No email.');
+        return res.status(400).send({ status: "failed", message: "ไม่พบอีเมลนี้ในระบบ!" });
+    }
+
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: "worachitzaza411@gmail.com", // your email
+          pass: 'hdaxjkokokopyqxj' // your email password
+        }
+    });
+
+    var mailOptions = {
+        from: 'admin somchun <admin@gmail.com>',
+        to: 'ksribanjong@gmail.com',
+        subject: 'Reseto your password',
+        html: '<h1>Click a button to reset</h1><a href="http://localhost:8080/resetPassword">reset</a>'
+      }
+
+    transporter.sendMail(mailOptions, (err, info) => {
+        if(err){
+            console.log(err);
+        }
+        else{
+            console.log(info);
+        }
+    })
+    var addData = {
+        date_sent: moment.tz("Asia/Bangkok").format('DD/MM/YYYY HH:mm:ss'),
+        email: email,
+        id: uuidv4(),
+        status: 0,
+        data_submit: '',
+        
+    }
+    await db.collection('repassword').add(addData);
+    return res.status(200).send({ status: "ok", message: "แก้ไขรหัสผ่านสำเร็จ!" });
 }

@@ -33,12 +33,21 @@ export default {
             userData:[],
         };
     },
+    computed:{
+        haveUser(){
+            return JSON.parse(localStorage.getItem("user_Login"));
+        }
+    },
 
     mounted() {
+        if(!this.haveUser){
+            this.$router.push("/login")
+        }
         axios.get(URL + 'showAll').then((res) => {
             localStorage.setItem("all_User", JSON.stringify(res.data));
             this.userData = JSON.parse(localStorage.getItem("all_User")).result;
         })
+        
     },
 
 };
