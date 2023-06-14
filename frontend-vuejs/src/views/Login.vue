@@ -8,8 +8,11 @@
                         <label for="">Email</label>
                         <input type="text" class="input mb-3" placeholder="Enter Email" v-model="user.email">
                         <label for="">Password</label>
-                        <input type="password" class="input mb-3" placeholder="Enter Password" v-model="user.password">
-                        <button type="submit" class="button is-fullwidth is-success">Sign In</button>
+                        <input type="password" class="input" placeholder="Enter Password" v-model="user.password">
+                        <a href="/sendEmail" >
+                            <small class="ml-2">forget password</small>
+                        </a>
+                        <button type="submit" class="button is-fullwidth is-success mt-3">Sign In</button>
                     </div>
                 </form>
             </div>
@@ -30,21 +33,25 @@ export default {
                 email: "",
                 password: ""
             },
-            show:[],
+            show: "",
         };
     },
     computed:{
         
     },
     mounted() {
- 
+        this.haveUser();
     },
 
     methods: {
+        haveUser(){
+            this.show = JSON.parse(localStorage.getItem("user_Login"))
+        },
         onSignin(){
             axios.post(URL + "signin", this.user).then((res) =>{
                 localStorage.setItem("user_Login", JSON.stringify(res.data));
-                
+                this.haveUser();
+
                 this.$swal.fire({
                     toast: true,
                     position: 'top-end',
@@ -53,6 +60,7 @@ export default {
                     icon: 'success',
                     title: this.show.username + '  ยินดีต้อนรับ',
                 })
+                
                 this.$router.push("/");
                 this.$router.go(0);  //refresh page
             })
@@ -61,7 +69,6 @@ export default {
                     icon: 'error',
                     title: error.response.data.message,
                 })
-                // alert(error.response.data.message);
             })
 
         }

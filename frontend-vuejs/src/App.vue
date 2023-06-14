@@ -8,7 +8,7 @@
             <router-link to="/" >HOME</router-link>
           </a>
               
-          <div class="navbar-item has-dropdown is-hoverable" v-if="haveUser">
+          <div class="navbar-item has-dropdown is-hoverable" v-if="isLogin">
             <a class="navbar-link">Function +</a>
 
             <div class="navbar-dropdown">
@@ -26,8 +26,11 @@
 
         </div>
 
-        <div class="navbar-end" v-if="haveUser">
+        <div class="navbar-end" v-if="isLogin">
           <div class="navbar-item has-dropdown is-hoverable" >
+            <div class="navbar-item">
+              {{ user.email }}
+            </div>
             <a class="navbar-link">
               <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/2048px-Circle-icons-profile.svg.png" alt="">
             </a>
@@ -36,15 +39,14 @@
               <a class="navbar-item">
                 <router-link to="/detail">My Profile</router-link>
               </a>
+
               <hr class="navbar-divider">
-              <a class="navbar-item" style="color: red;" @click="onLogout">
-                Log-Out
-              </a>
+              <button class=" button is-fullwidth is-danger"  @click="onLogout">Log-Out</button>
             </div>
           </div>
         </div>
 
-        <div class="navbar-end" v-if="!haveUser">
+        <div class="navbar-end" v-if="!isLogin">
           <div class="navbar-item">
             <router-link to="/register" >Sign Up</router-link>
           </div>
@@ -64,23 +66,32 @@ export default {
   name: "app",
   data(){
     return{
-      user:[],
+      user: null,
       // refreshKey: 0,
+      isLogin: false,
     }
   },
   computed:{
-    haveUser(){
-      // this.$router.go(0);
-      return JSON.parse(localStorage.getItem("user_Login"));
-    },
+    // haveUser(){
+    //   this.user = JSON.parse(localStorage.getItem("user_Login"));
+    //   return this.user;
+    // },
     
   },
   mounted(){
-    if(!this.haveUser){
-      this.$router.push("/login");
-    }
+    this.haveUser();
   },
   methods: {
+    haveUser(){
+      this.user = JSON.parse(localStorage.getItem("user_Login"));
+      if(this.user){
+        this.isLogin = true;
+      }
+      else{
+        this.isLogin = false;
+      }
+    },
+
     onLogout(){
       this.$swal.fire({
         icon: 'warning',
@@ -94,19 +105,13 @@ export default {
       .then((result) => {
         if(result.isConfirmed){
           localStorage.clear();
-          
-          // this.$router.push("/login")
-            this.$router.go(0)
-          
-          
-          // window.setTimeout(this.$router.go(0), 5000)
+          this.user = null;
+          this.haveUser();
+          this.$router.push("/login")
         }
       })
             
     },
-    // forceRerender() {
-    //    this.refreshKey += 1;  
-    //  }
     
   },
 }

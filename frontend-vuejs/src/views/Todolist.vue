@@ -60,9 +60,9 @@ export default {
         }
     },
     mounted() {
-        // if(!this.haveUser){
-        //     this.$router.push("/login")
-        // }
+        if(!this.haveUser){
+            this.$router.push("/login")
+        }
         onSnapshot(dbCollection, (query) => {
             const result = [];
             query.forEach((doc) => {

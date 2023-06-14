@@ -23,10 +23,26 @@ export default {
         };
     },
     computed:{
-        
+        haveUser(){
+            return JSON.parse(localStorage.getItem("user_Login"));
+            
+        },
+        isAdmin(){
+            if(!this.haveUser){
+                this.$router.push("/login");
+            }
+            else{
+                if(this.haveUser.role != 'admin'){
+                    this.$router.push("/");
+                }
+            }
+        }
     },
-    mounted() {
 
+    mounted() {
+        
+        this.isAdmin;
+        
     },
     methods: {
         

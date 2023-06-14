@@ -6,13 +6,16 @@
                     <div class="title has-text-centered">Reset Password</div>
                     <div class="field">
                         <label for="">Password</label>
-                        <input type="text" class="input mb-3" placeholder="Enter Password" v-model="user.password1">
+                        <input type="password" class="input mb-3" placeholder="Enter Password" v-model="user.password1">
                         <label for="">Confirm Password</label>
                         <input type="password" class="input mb-3" placeholder="Enter Password" v-model="user.password2">
                         <button type="submit" class="button is-fullwidth is-success">Confirm</button>
                     </div>
                 </form>
+                {{ reset_user }}
             </div>
+
+            
         </div>
     </div>
 </template>
@@ -30,23 +33,48 @@ export default {
                 password1: "",
                 password2: ""
             },
+            reset_user: "",
         };
     },
-
     computed:{
-        haveUser(){
-            return JSON.parse(localStorage.getItem("user_Login"));
-        }
+        
     },
-
     mounted() {
-        if(!this.haveUser){
-            
-        }
+        this.checkToken();
+
+        
     },
 
     methods: {
-        
+        onChange(){
+            if(this.user.password1 != this.user.password2){
+                this.$swal.fire({
+                    icon: 'error',
+                    title: 'รหัสผ่านไม่ตรงกัน',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+            else{
+                axios.post(URL + 'resetPassword', this.user).then(() => {
+                    this.$swal.fire({
+                        icon: 'success',
+                        title: 'แก้ไขรหัสผ่านสำเร็จ',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    this.$router.push("/");
+                })
+            }
+        },
+        checkToken(){
+            let id = this.$route.params.id;
+
+            axios.post(URL + 'checkToken/'+ id, this.reset_user).then((res) => {
+                console.log("111");
+                console.log(res);
+            })
+        }
     },
 };
 </script>

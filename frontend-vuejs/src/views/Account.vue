@@ -80,20 +80,31 @@ export default {
             unlock: false,
         };
     },
-    // created:{
-    //     refresh(){
-    //         localStorage.removeItem("user_select")
-    //     }
-    // },
     computed:{
-
+        haveUser(){
+            return JSON.parse(localStorage.getItem("user_Login"));
+            
+        },
+        isAdmin(){
+            if(!this.haveUser){
+                this.$router.push("/login");
+            }
+            else{
+                if(this.haveUser.role != 'admin'){
+                    this.$router.push("/");
+                }
+            }
+        }
     },
     mounted() {
+        this.isAdmin;
+        
         axios.get(URL + 'showAll').then((res) => {
             localStorage.setItem("all_User", JSON.stringify(res.data));
             this.userData = JSON.parse(localStorage.getItem("all_User")).result;
             this.indexData = JSON.parse(localStorage.getItem("all_User")).index;
-        })  
+        }) 
+        
     },
 
     methods: {

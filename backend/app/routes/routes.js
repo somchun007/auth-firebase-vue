@@ -9,5 +9,7 @@ module.exports = function (app) {
     app.post('/delete', controller.delete);
     app.post('/update', controller.update);
 
+    app.post('/findEmail', controller.findEmail);
+    app.post('/checkToken/:id', controller.checkToken);
     app.post('/resetPassword', controller.rePassword);
 }

@@ -28,22 +28,11 @@ exports.signup = async (req, res) => {
     await db.collection('user').add(addData);
     return res.status(200).send({ status: "ok", message: "สมัครสมาชิกสำเร็จ!" });
 
-    // const snapshot = await db.collection('user').where('username', '==', username).get();
-    // snapshot.forEach(async doc => {
-    //     if(doc.data().username != username){
-    //         await db.collection('user').add(addData);
-    //         // console.log("ทำรายการไม่สำเร็จ!")
-    //         // return res.status(400).send({ status: "failed", message: "ทำรายการไม่สำเร็จ!" });
-    //     }        
-    //     else{
-    //         await db.collection('user').add(addData);
-    //         console.log("สมัครสมาชิกสำเร็จ!")
-    //     }
-    // });
 }
 
 exports.signin = async (req, res) =>{
     const { email, password } = req.body;
+
     const snapshot = await db.collection('user').where('email', '==', email).where('password', '==', password).get();
 
     // const doc_id = 
@@ -69,16 +58,9 @@ exports.signin = async (req, res) =>{
         role: result[0].role,
         doc_id: result[1],
 
-        // result,
-        // index
     });
-
 }
 
-// exports.signout = async (req, res) =>{
-//     const { email, password } = req.body;
-    
-// }
 exports.update = async (req, res) =>{
     const uid = req.body.doc_id;
     const { username, password, email, firstname, lastname } = req.body;
@@ -156,14 +138,27 @@ exports.showUser = async (req, res) =>{
     return res.status(200).send({status: "ok", result});
 }
 
+exports.findEmail = async (req, res) => {
+    const email = req.body.email;
 
-exports.rePassword = async (req, res) => {
-    const { email } = req.body;
-    const snapshot = await db.collection('user').where('email', '!=', email).get();
+    const snapshot = await db.collection('user').where('email', '==', email).get();
+
     if (snapshot.empty) {
         console.log('No email.');
         return res.status(400).send({ status: "failed", message: "ไม่พบอีเมลนี้ในระบบ!" });
     }
+    var addData = {
+        datetime: moment().valueOf(),
+        datetimeString: moment.tz("Asia/Bangkok").format('DD/MM/YYYY HH:mm:ss'),
+        email: email,
+        id: uuidv4(),
+        status: 0,
+        datetimeSubmit: null,
+        dataTimeSubmitString: null,
+        
+    }
+    // console.log(addData.id);
+    await db.collection('repassword').add(addData);
 
     const transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -172,22 +167,49 @@ exports.rePassword = async (req, res) => {
           pass: 'hdaxjkokokopyqxj' // your email password
         }
     });
-
+    
     var mailOptions = {
         from: 'admin somchun <admin@gmail.com>',
         to: 'ksribanjong@gmail.com',
-        subject: 'Reseto your password',
-        html: '<h1>Click a button to reset</h1><a href="http://localhost:8080/resetPassword">reset</a>'
-      }
+        subject: 'Reset your password',
+        html: `<h1>Click a button to reset</h1><a href="http://localhost:8080/resetPassword/${addData.id}">reset</a>`
+    }
 
     transporter.sendMail(mailOptions, (err, info) => {
-        if(err){
-            console.log(err);
-        }
-        else{
-            console.log(info);
-        }
+        // if(err){
+        //     console.log(err);
+        // }
+        // else{
+        //     console.log(info);
+        // }
     })
+    return res.status(200).send(addData);
+}
+
+exports.checkToken = async (req, res) => {
+    const { id } = req.params;
+    
+    console.log(id);
+    const snapshot = await db.collection('repassword').where("id", "==", id).get();
+    let result = [];
+    snapshot.forEach(doc => {
+        result.push(doc.data());
+    })
+    // console.log(result)
+
+    if (snapshot.empty) {
+        return res.status(400).send({ status: "Token_not_found", message: "ลิ้งค์ไม่ถูกต้อง!" });
+    }
+    else{
+        if(result.status == 1){
+            return res.status(400).send({ status: "Token_timeout", message: "ลิ้งค์ถูกใช้งานแล้ว!" });
+        }
+    }
+
+}
+exports.rePassword = async (req, res) => {
+    const { email } = req.body;
+    
     var addData = {
         date_sent: moment.tz("Asia/Bangkok").format('DD/MM/YYYY HH:mm:ss'),
         email: email,
