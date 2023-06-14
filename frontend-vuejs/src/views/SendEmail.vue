@@ -12,7 +12,6 @@
                 </form>
             </div>
         </div>
-        <a href="http://localhost:8080/resetPassword/id">click</a>
     </div>
 </template>
 

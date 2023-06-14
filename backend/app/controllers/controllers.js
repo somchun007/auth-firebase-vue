@@ -171,17 +171,14 @@ exports.findEmail = async (req, res) => {
     var mailOptions = {
         from: 'admin somchun <admin@gmail.com>',
         to: 'ksribanjong@gmail.com',
-        subject: 'Reset your password',
-        html: `<h1>Click a button to reset</h1><a href="http://localhost:8080/resetPassword/${addData.id}">reset</a>`
+        subject: 'Reset your password WEB',
+        html: `<h1>Click a button to reset your password</h1> <button><a href="http://localhost:8080/resetPassword/${addData.id}">reset</a></button>`
     }
 
     transporter.sendMail(mailOptions, (err, info) => {
-        // if(err){
-        //     console.log(err);
-        // }
-        // else{
-        //     console.log(info);
-        // }
+        if(err){
+            console.log(err);
+        }
     })
     return res.status(200).send(addData);
 }
