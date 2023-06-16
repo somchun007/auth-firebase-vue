@@ -35,7 +35,6 @@ exports.signin = async (req, res) =>{
 
     const snapshot = await db.collection('user').where('email', '==', email).where('password', '==', password).get();
 
-    // const doc_id = 
     if (snapshot.empty) {
         console.log('No matching user.');
         return res.status(400).send({ status: "failed", message: "ไม่พบข้อมูล!" });
@@ -44,10 +43,7 @@ exports.signin = async (req, res) =>{
     snapshot.forEach(doc => {
         result.push(doc.data());
         result.push(doc.id);
-        // index = doc.id;
     })
-    // console.log(result[0].firstname);
-    // localStorage.setItem("user", JSON.stringify(result[0]));
     return res.status(200).send({ 
         // status: "ok", 
         username: result[0].username,
@@ -114,7 +110,6 @@ exports.showAll = async (req, res) =>{
         result.push(doc.data());
         index.push(doc.id);
     })
-    // console.log(result)
     return res.status(200).send({
         // status: "ok", 
         result, 
@@ -134,7 +129,6 @@ exports.showUser = async (req, res) =>{
     snapshot.forEach(doc => {
         result.push(doc.data());
     })
-    // console.log(result);
     return res.status(200).send({status: "ok", result});
 }
 
@@ -142,22 +136,19 @@ exports.findEmail = async (req, res) => {
     const email = req.body.email;
 
     const snapshot = await db.collection('user').where('email', '==', email).get();
-
     if (snapshot.empty) {
         console.log('No email.');
         return res.status(400).send({ status: "failed", message: "ไม่พบอีเมลนี้ในระบบ!" });
     }
     var addData = {
-        datetime: moment().valueOf(),
-        datetimeString: moment.tz("Asia/Bangkok").format('DD/MM/YYYY HH:mm:ss'),
         email: email,
         id: uuidv4(),
         status: 0,
         datetimeSubmit: null,
-        dataTimeSubmitString: null,
+        datatimeSubmitString: null,
         
     }
-    // console.log(addData.id);
+
     await db.collection('repassword').add(addData);
 
     const transporter = nodemailer.createTransport({
@@ -172,7 +163,8 @@ exports.findEmail = async (req, res) => {
         from: 'admin somchun <admin@gmail.com>',
         to: 'ksribanjong@gmail.com',
         subject: 'Reset your password WEB',
-        html: `<h1>Click a button to reset your password</h1> <button><a href="http://localhost:8080/resetPassword/${addData.id}">reset</a></button>`
+        html: `<h1>Click a button to reset your password</h1> 
+        <button><a href="http://localhost:8080/resetPassword/${addData.id}">reset</a></button>`
     }
 
     transporter.sendMail(mailOptions, (err, info) => {
@@ -186,35 +178,53 @@ exports.findEmail = async (req, res) => {
 exports.checkToken = async (req, res) => {
     const { id } = req.params;
     
-    console.log(id);
     const snapshot = await db.collection('repassword').where("id", "==", id).get();
     let result = [];
     snapshot.forEach(doc => {
         result.push(doc.data());
     })
-    // console.log(result)
 
     if (snapshot.empty) {
         return res.status(400).send({ status: "Token_not_found", message: "ลิ้งค์ไม่ถูกต้อง!" });
     }
     else{
-        if(result.status == 1){
+        if(result[0].status == 1){
             return res.status(400).send({ status: "Token_timeout", message: "ลิ้งค์ถูกใช้งานแล้ว!" });
         }
+        else{
+            return res.status(200).send({ status: "ok"});
+        }
     }
-
 }
 exports.rePassword = async (req, res) => {
-    const { email } = req.body;
+    const password = req.body.password1;
+    const { id } = req.params;
+
+    const snapshot = await db.collection('repassword').where("id", "==", id).get();
+    let result = [];
+    snapshot.forEach(doc => {
+        result.push(doc.data());
+    })
     
-    var addData = {
-        date_sent: moment.tz("Asia/Bangkok").format('DD/MM/YYYY HH:mm:ss'),
-        email: email,
-        id: uuidv4(),
-        status: 0,
-        data_submit: '',
-        
+    const slowshot = await db.collection('user').where("email", "==", result[0].email).get();
+    slowshot.forEach(doc => {
+        doc.ref.update({
+            password: password,
+        }) 
+    })
+
+    if(slowshot){
+        snapshot.forEach(doc => {
+            doc.ref.update({
+                status: 1,
+                datetimeSubmit: moment().valueOf(),
+                datatimeSubmitString: moment.tz("Asia/Bangkok").format('DD/MM/YYYY HH:mm:ss'),
+            }) 
+        })
+        return res.status(200).send({ status: "ok", message: "แก้ไขรหัสผ่านสำเร็จ!" });
     }
-    await db.collection('repassword').add(addData);
-    return res.status(200).send({ status: "ok", message: "แก้ไขรหัสผ่านสำเร็จ!" });
+    else{
+        return res.status(400).send({ status: "failed", message: "ล้มเหลว!" });
+    }
+    
 }

@@ -48,7 +48,7 @@ export default {
                 
                 this.$swal.fire({
                     icon: 'success',
-                    title: 'ส่งลิ้งค์ไปยังอีเมลคุณเรียบร้อยแล้ว',
+                    title: 'ตรวจสอบลิ้งค์ที่อีเมลคุณ',
                     showConfirmButton: false,
                     timer: 1500
                 })

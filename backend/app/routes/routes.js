@@ -11,5 +11,5 @@ module.exports = function (app) {
 
     app.post('/findEmail', controller.findEmail);
     app.post('/checkToken/:id', controller.checkToken);
-    app.post('/resetPassword', controller.rePassword);
+    app.post('/resetPassword/:id', controller.rePassword);
 }

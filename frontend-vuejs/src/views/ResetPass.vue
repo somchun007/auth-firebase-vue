@@ -1,6 +1,6 @@
 <template>
     <div class=" columns is-centered">
-        <div class="card">
+        <div class="card" v-if="showForm">
             <div class="card-content">
                 <form @submit.prevent="onChange">
                     <div class="title has-text-centered">Reset Password</div>
@@ -12,7 +12,7 @@
                         <button type="submit" class="button is-fullwidth is-success">Confirm</button>
                     </div>
                 </form>
-                {{ reset_user }}
+                {{ user }}
             </div>
 
             
@@ -33,7 +33,8 @@ export default {
                 password1: "",
                 password2: ""
             },
-            reset_user: "",
+            
+            showForm: false,
         };
     },
     computed:{
@@ -56,23 +57,40 @@ export default {
                 })
             }
             else{
-                axios.post(URL + 'resetPassword', this.user).then(() => {
+                let id = this.$route.params.id;
+                axios.post(URL + 'resetPassword/'+ id, this.user).then((res) => {
                     this.$swal.fire({
                         icon: 'success',
-                        title: 'แก้ไขรหัสผ่านสำเร็จ',
+                        title: res.data.message,
                         showConfirmButton: false,
                         timer: 1500
                     })
-                    this.$router.push("/");
+                    this.$router.push("/login");
                 })
             }
         },
         checkToken(){
             let id = this.$route.params.id;
 
+            console.log(id);
             axios.post(URL + 'checkToken/'+ id, this.reset_user).then((res) => {
-                console.log("111");
-                console.log(res);
+                // console.log(res);
+                this.showForm = true;
+                
+            })
+            .catch((error) => {
+                // console.log(error);
+                
+                this.$swal.fire({
+                    icon: 'error',
+                    title: error.response.data.message,
+                    showConfirmButton: true,
+                    // timer: 1500
+                }).then((result) => {
+                        this.$router.push("/login")
+                    
+                    })
+                
             })
         }
     },
