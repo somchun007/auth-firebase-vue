@@ -46,7 +46,7 @@
 
 <script>
 import axios from 'axios';
-const URL = "http://localhost:8092/";
+const URL = "http://localhost:48092/";
 
 export default {
     name: 'CrudBulmaDetail',
@@ -101,7 +101,12 @@ export default {
             // ])
             localStorage.removeItem("user_Login");
             axios.post(URL + 'update', this.user).then((res) => {
-                
+                this.$swal.fire({
+                    icon: 'success',
+                    title: 'แก้ไขข้อมูลสำเร็จ',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
                 localStorage.setItem("user_Login", JSON.stringify(res.data));
                 this.haveUser;
             })
