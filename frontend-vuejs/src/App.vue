@@ -26,6 +26,15 @@
 
         </div>
 
+        <div class="top navbar-end">
+          <input type="checkbox" id="switch"/>
+          <label for="switch">
+            <small>
+              <strong>{{ sub1 }}  {{ sub2 }}</strong>
+            </small>
+          </label>
+        </div>
+
         <div class="navbar-end" v-if="isLogin">
           <div class="navbar-item has-dropdown is-hoverable" >
             <div class="navbar-item">
@@ -67,7 +76,8 @@ export default {
   data(){
     return{
       user: null,
-      // refreshKey: 0,
+      sub1: "ENG",
+      sub2: "THA",
       isLogin: false,
     }
   },
@@ -116,7 +126,10 @@ export default {
   },
 }
 </script>
-<style>
+
+<style scoped>
+@import '~bulma/css/bulma.min.css';
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -137,4 +150,48 @@ nav a {
 nav a.router-link-exact-active {
   color: #42b983;
 }
+
+input[type=checkbox]{
+	height: 0;
+	width: 0;
+	visibility: hidden;
+}
+
+label {
+	cursor: pointer;
+	text-indent: -9999px;
+	width: 70px;
+	height: 30px;
+	background: #5598da;
+  border: 2px solid black;
+	display: block;
+	border-radius: 100px;
+	position: relative;
+}
+
+label:after {
+	content: '';
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 30px;
+	height: 20px;
+	background: #0f0f0f;
+	border-radius: 90px;
+	transition: 0.3s;
+}
+
+input:checked + label {
+	background: #da5e55;
+}
+
+input:checked + label:after {
+	left: calc(100% - 5px);
+	transform: translateX(-100%);
+}
+
+label:active:after {
+	width: 10px;
+}
+
 </style>

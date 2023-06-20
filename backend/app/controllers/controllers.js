@@ -5,35 +5,40 @@ require('moment-timezone');
 moment.locale('th');
 
 const nodemailer = require('nodemailer');
-const {v4 : uuidv4} = require('uuid')
+const {v4 : uuidv4} = require('uuid');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 exports.signup = async (req, res) => {
     const { username, password, email, firstname, lastname } = req.body;
-    const snapshot = await db.collection('user').where('email', '!=', email).get();
+    const snapshot = await db.collection('user').where('email', '==', email).get();
+
     if (snapshot.empty) {
+        var addData = {
+            username: username,
+            password: bcrypt.hashSync(password, 8),
+            email: email,
+            firstname: firstname,
+            lastname: lastname,
+            role: "user",
+            signuptimestampstring: moment.tz("Asia/Bangkok").format('DD/MM/YYYY HH:mm:ss'),
+            signuptimestamp: moment().valueOf(),
+        }
+        await db.collection('user').add(addData);
+        return res.status(200).send({ status: "ok", message: "สมัครสมาชิกสำเร็จ!" });
+    }
+    else{
         console.log('No matching documents.');
         return res.status(400).send({ status: "failed", message: "อีเมลมีในระบบแล้ว!" });
     }
-    var addData = {
-        username: username,
-        password: password,
-        email: email,
-        firstname: firstname,
-        lastname: lastname,
-        role: "user",
-        signuptimestampstring: moment.tz("Asia/Bangkok").format('DD/MM/YYYY HH:mm:ss'),
-        signuptimestamp: moment().valueOf(),
-        
-    }
-    await db.collection('user').add(addData);
-    return res.status(200).send({ status: "ok", message: "สมัครสมาชิกสำเร็จ!" });
 
 }
 
 exports.signin = async (req, res) =>{
     const { email, password } = req.body;
 
-    const snapshot = await db.collection('user').where('email', '==', email).where('password', '==', password).get();
+    // const snapshot = await db.collection('user').where('email', '==', email).where('password', '==', password).get();
+    const snapshot = await db.collection('user').where('email', '==', email).get();
 
     if (snapshot.empty) {
         console.log('No matching user.');
@@ -44,17 +49,28 @@ exports.signin = async (req, res) =>{
         result.push(doc.data());
         result.push(doc.id);
     })
-    return res.status(200).send({ 
-        // status: "ok", 
-        username: result[0].username,
-        firstname: result[0].firstname,
-        lastname: result[0].lastname,
-        email: result[0].email,
-        password: result[0].password,
-        role: result[0].role,
-        doc_id: result[1],
 
-    });
+    var passwordIden = bcrypt.compareSync(
+        password,
+        result[0].password
+    )
+    if (!passwordIden) {
+        console.log('No matching password.');
+        return res.status(400).send({ status: "failed", message: "รหัสผ่านไม่ถูกต้อง!" });
+    }
+    else{
+        return res.status(200).send({ 
+            // status: "ok", 
+            username: result[0].username,
+            firstname: result[0].firstname,
+            lastname: result[0].lastname,
+            email: result[0].email,
+            password: result[0].password,
+            role: result[0].role,
+            doc_id: result[1],
+    
+        });
+    }
 }
 
 exports.update = async (req, res) =>{
@@ -63,7 +79,7 @@ exports.update = async (req, res) =>{
 
     await db.collection('user').doc(uid).update({
         username: username,
-        password: password,
+        password: bcrypt.hashSync(password),
         email: email,
         firstname: firstname,
         lastname: lastname,

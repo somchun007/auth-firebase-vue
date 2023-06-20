@@ -16,6 +16,8 @@ const routes = [
     { path: "/account", component: () => import('../views/Account.vue') },
     { path: "/sendEmail", component: () => import('../views/SendEmail.vue') },
     { path: "/resetpassword/:id", component: () => import('../views/ResetPass.vue') },
+    { path: "/nav", component: () => import('../views/nav.vue') },
+    { path: "/nav2", component: () => import('../views/nav2.vue') },
 
 ]
 
