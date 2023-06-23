@@ -1,20 +1,20 @@
 <template>
     <div class="badass-todo">
 
-        <div class="title has-text-centered">Todo-List</div>
+        <div class="title has-text-centered">{{ $t("title.todolist") }}</div>
         <form @submit.prevent="onAdd">
             <div class="field is-grouped">
                 <p class="control is-expanded">
                     <input class="input" type="text" placeholder="Add something" v-model="message"/>
                 </p>
                 <p class="control">
-                    <button type="submit" class="button is-info" :disabled="!message">Add</button>
-                    <button class="button is-danger ml-2" @click.prevent="onReset">Reset</button>
+                    <button type="submit" class="button is-info" :disabled="!message">{{ $t("button.add") }}</button>
+                    <button class="button is-danger ml-2" @click.prevent="onReset">{{ $t("button.reset") }}</button>
                 </p>
             </div>
         </form>
 
-        <div class="card" v-for="(todo, index) in todos" :key="index" :class="{ 'has-background-success-light': todo.done }">
+        <div class="card" v-for="(todo, index) in todos" :key="index" :class="{ 'has-background-primary-light': todo.done }">
             <div class="card-content">
                 <div class="content">
                     <div class="columns is-mobile is-vcentered">
@@ -31,9 +31,6 @@
                         </div>
                     </div>
 
-                    <!-- <div>
-                        {{ todos }}
-                    </div> -->
                 </div>
             </div>
         </div>
@@ -42,7 +39,7 @@
   
 <script>
 
-import { doc, collection, onSnapshot, addDoc, deleteDoc, updateDoc, getDocs, query, where } from "firebase/firestore";
+import { doc, collection, onSnapshot, addDoc, deleteDoc, updateDoc, getDocs, query, where, orderBy } from "firebase/firestore";
 import { db } from "@/firebase";
 const dbCollection = collection(db, "todos");
   
@@ -63,18 +60,21 @@ export default {
         if(!this.haveUser){
             this.$router.push("/login")
         }
-        onSnapshot(dbCollection, (query) => {
+
+        const q = query(dbCollection, orderBy("time", "desc"));
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const result = [];
-            query.forEach((doc) => {
-            const todo = {
-                id: doc.id,
-                content: doc.data().content,
-                done: doc.data().done,
-            };
-            result.push(todo);
+            querySnapshot.forEach((doc) => {
+                 const todo = {
+                    id: doc.id,
+                    content: doc.data().content,
+                    done: doc.data().done,
+                };
+                result.push(todo);
             });
             this.todos = result;
         });
+        
     },
   
     methods: {

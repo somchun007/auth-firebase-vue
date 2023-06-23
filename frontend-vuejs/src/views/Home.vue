@@ -1,6 +1,6 @@
 <template>
     <div class="badass-todo" v-if="haveUser">
-        <div class="title has-text-centered">{{ title }}</div>
+        <div class="title has-text-centered">{{ $t("title.home") }}</div>
         <div class="field is-grouped ml-6">
             <div v-if="this.haveUser.role == 'admin'" class="ml-4">
                 <a class="button is-warning" href="/stock">Add Product</a>

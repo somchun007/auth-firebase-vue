@@ -1,7 +1,7 @@
 <template>
     <div class="columns is-centered">
         <div class="card-content">
-            <div class="title ml-5">All Members</div>
+            <div class="title ml-5">{{ $t("title.member") }}</div>
             <ul class="columns">
                 <li v-for="(item, index) in userData" :key="index" class="column ml-5 mr-5">
                     <div class="card pr-5 pl-5 pb-4 pt-4">
@@ -23,7 +23,7 @@
 
 <script>
 import axios from 'axios';
-const URL = "http://localhost:48092/";
+const URL = "http://localhost:8092/";
 
 export default {
     name: 'CrudBulmaPeople',

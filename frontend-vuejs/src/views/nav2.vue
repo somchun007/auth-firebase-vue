@@ -1,24 +1,24 @@
 <template>
   
 	<div class="switch">
-	    <input id="language-toggle" class="check-toggle check-toggle-round-flat" type="checkbox">
-	    <label for="language-toggle"></label>
-	    <span class="on">ENG</span>
-	    <span class="off">THA</span>
-  	</div>
+    <input id="language-toggle" class="check-toggle check-toggle-round-flat" type="checkbox">
+    <label for="language-toggle"></label>
+    <span class="on">ENG</span>
+    <span class="off">THA</span>
+  </div>
  
 </template>
 
-<style>
+<style scoped>
 .switch {
   position: relative;
   display: inline-block;
-  margin: 0 5px;
+  margin-top: 9px;
 }
 
 .switch > span {
   position: absolute;
-  top: 5px;
+  top: 4px;
   pointer-events: none;
   font-weight: bold;
   font-size: 14px;
@@ -56,8 +56,8 @@ input.check-toggle-round-flat:checked ~ .on {
 input.check-toggle-round-flat + label {
   padding: 2px;
   width: 90px;
-  height: 30px;
-  background-color: #5598da;
+  height: 26px;
+  background-color: #42b983;
   border-radius: 60px;
 }
 input.check-toggle-round-flat + label:before, 
@@ -71,7 +71,6 @@ input.check-toggle-round-flat + label:before {
   top: 2px;
   left: 2px;
   bottom: 2px;
-  background-color: #F36F25;
 }
 input.check-toggle-round-flat + label:after {
   top: 2px;
@@ -85,5 +84,9 @@ input.check-toggle-round-flat + label:after {
 
 input.check-toggle-round-flat:checked + label:after {
   margin-left: 44px;
+}
+
+input.check-toggle-round-flat + label:active:after{
+  width: 20px;
 }
 </style>

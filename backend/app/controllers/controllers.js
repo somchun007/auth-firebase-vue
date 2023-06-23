@@ -59,6 +59,7 @@ exports.signin = async (req, res) =>{
         return res.status(400).send({ status: "failed", message: "รหัสผ่านไม่ถูกต้อง!" });
     }
     else{
+        var token = jwt.sign({email: email}, 'secret', {expiresIn: '30ms'})
         return res.status(200).send({ 
             // status: "ok", 
             username: result[0].username,
@@ -68,6 +69,7 @@ exports.signin = async (req, res) =>{
             password: result[0].password,
             role: result[0].role,
             doc_id: result[1],
+            accessToken: token,
     
         });
     }

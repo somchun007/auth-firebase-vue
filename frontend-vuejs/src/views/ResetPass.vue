@@ -3,26 +3,23 @@
         <div class="card" v-if="showForm">
             <div class="card-content">
                 <form @submit.prevent="onChange">
-                    <div class="title has-text-centered">Reset Password</div>
+                    <div class="title has-text-centered">{{ $t("headform.resetPass") }}</div>
                     <div class="field">
-                        <label for="">Password</label>
+                        <label for="">{{ $t("user.password") }}</label>
                         <input type="password" class="input mb-3" placeholder="Enter Password" v-model="user.password1">
-                        <label for="">Confirm Password</label>
+                        <label for="">{{ $t("user.confirmPass") }}</label>
                         <input type="password" class="input mb-3" placeholder="Enter Password" v-model="user.password2">
-                        <button type="submit" class="button is-fullwidth is-success">Confirm</button>
+                        <button type="submit" class="button is-fullwidth is-success">{{ $t("button.confirm") }}</button>
                     </div>
                 </form>
-                {{ user }}
-            </div>
-
-            
+            </div>  
         </div>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
-const URL = "http://localhost:48092/";
+const URL = "http://localhost:8092/";
 
 export default {
     name: 'UploadResetPass',
@@ -49,12 +46,22 @@ export default {
     methods: {
         onChange(){
             if(this.user.password1 != this.user.password2){
-                this.$swal.fire({
-                    icon: 'error',
-                    title: 'รหัสผ่านไม่ตรงกัน',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+                if(this.$i18n.locale == 'th'){
+                    this.$swal.fire({
+                        icon: 'error',
+                        title: 'รหัสผ่านไม่ตรงกัน',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+                else{
+                    this.$swal.fire({
+                        icon: 'error',
+                        title: 'Passwords do not match',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
             }
             else{
                 let id = this.$route.params.id;
