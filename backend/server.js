@@ -22,7 +22,7 @@ console.log(moment.tz("Asia/Bangkok").format('DD/MM/YYYY HH:mm:ss'));
 require("./app/routes/routes")(app);
 
 
-const PORT = process.env.PORT || 48092;
+const PORT = process.env.PORT || 8092;
 app.listen(PORT, () => {
   console.log(`Start server at port ${PORT}`)
 })
