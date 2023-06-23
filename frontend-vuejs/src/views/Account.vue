@@ -67,7 +67,7 @@
 
 <script>
 import axios from 'axios';
-const URL = "http://localhost:8092/";
+const URL = "http://localhost:48092/";
 
 export default {
     name: 'CrudBulmaRecheck',
