@@ -21,6 +21,9 @@
               <a class="navbar-item">
                 <router-link to="/product">{{ $t("navbar.product") }}</router-link>
               </a>
+              <a class="navbar-item">
+                <router-link to="/wikipedia">{{ $t("navbar.wikipedia") }}</router-link>
+              </a>
             </div>
           </div>
 
@@ -66,10 +69,10 @@
 
     <div class="row">
       <div class="col">
-        <button @click="switchLocale1()" class="switch" :class="{ completed: checkLang1 }">{{ Locale1 }}</button>
+        <button @click="switchLocale1()" class="switch" :class="{ completed: buttonLang.langEng }">{{ Locale1 }}</button>
       </div>
       <div class="col">
-        <button @click="switchLocale2()" class="switch" :class="{ completed: checkLang2 }">{{ Locale2 }}</button>
+        <button @click="switchLocale2()" class="switch" :class="{ completed: buttonLang.langTha }">{{ Locale2 }}</button>
       </div>
     </div>
 
@@ -78,6 +81,9 @@
 </template>
 
 <script>
+import axios from 'axios';
+const URL = "http://localhost:48092/";
+
 export default {
   name: "app",
   data(){
@@ -86,8 +92,11 @@ export default {
       Locale1: "ENG",
       Locale2: "THA",
       isLogin: false,
-      checkLang1: true,
-      checkLang2: false,
+      buttonLang: {
+        langEng: true,
+        langTha: false,
+      },
+      lang: null,
     }
   },
   computed:{
@@ -99,6 +108,11 @@ export default {
   },
   mounted(){
     this.haveUser();
+    // this.changeLang();
+    // localStorage.setItem("language", JSON.stringify(this.$i18n.locale));
+    // this.lang = JSON.parsse(localStorage.getItem("language"));
+    
+
   },
   methods: {
     haveUser(){
@@ -110,6 +124,7 @@ export default {
         this.isLogin = false;
       }
     },
+    
 
     onLogout(){
       if(this.$i18n.locale == 'th'){
@@ -151,21 +166,28 @@ export default {
     },
     
     changeSwitch(){
-      this.checkLang1 = !this.checkLang1;
-      this.checkLang2 = !this.checkLang2;
+      this.buttonLang.langEng = !this.buttonLang.langEng;
+      this.buttonLang.langTha = !this.buttonLang.langTha;
+    },
+    changeLang(){
+      localStorage.setItem("language", JSON.stringify(this.$i18n.locale));
+      this.lang = JSON.parse(localStorage.getItem("language"));
     },
     switchLocale1(){
-      this.$i18n.locale = 'en'
-      if(this.checkLang1 == false){
+      this.$i18n.locale = 'en';
+      this.changeLang();
+      if(this.buttonLang.langEng == false){
         this.changeSwitch();
       }
     },
     switchLocale2(){
-      this.$i18n.locale = 'th'
-      if(this.checkLang2 == false){
+      this.$i18n.locale = 'th';
+      this.changeLang();
+      if(this.buttonLang.langTha == false){
         this.changeSwitch();
       }
-    }
+    },
+    
   },
 }
 </script>
@@ -213,4 +235,5 @@ nav a.router-link-exact-active {
   background-color: #8cefc2;
   font-weight: bold;
 }
+
 </style>

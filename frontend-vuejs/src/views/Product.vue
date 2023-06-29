@@ -1,10 +1,10 @@
 <template>
     <div class="columns">
         <div class="card-content">
-            <div class="field is-grouped ml-6">
-                <div class="title ml-6">Products Available Now</div>
+            
+            <div class="title ml-6">Products Available Now</div>
                 
-            </div>
+            
 
             <div class="column">
                 <!-- {{ isAdmin.role }} -->

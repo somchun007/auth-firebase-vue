@@ -10,6 +10,7 @@ export default {
         product: 'Products',
         signup: 'Sign Up',
         login: 'Log In',
+        wikipedia: 'Wikipedia',
       },
       
       title: {
@@ -17,6 +18,7 @@ export default {
         profile: 'Profile Setting',
         member: 'All Members',
         todolist: 'Todo-Lists',
+        wikipedia: 'Search Wikipedia',
       },
 
       headform: {
@@ -63,6 +65,7 @@ export default {
         product: 'รายการสินค้า',
         signup: 'สมัครสมาชิก',
         login: 'เข้าสู่ระบบ',
+        wikipedia: 'วิกิพีเดีย',
       },
       
       title: {
@@ -70,6 +73,7 @@ export default {
         profile: 'ตั้งค่าโปรไฟล์',
         member: 'สมาชิกทั้งหมด',
         todolist: 'รายการต้องทำ',
+        wikipedia: 'ค้นหา วิกิพีเดีย',
       },
 
       headform: {

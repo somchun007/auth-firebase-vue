@@ -1,10 +1,11 @@
 <template>
-    <div class="columns is-centered">
+    <div class="columns ml-5 mr-5">
         <div class="card-content">
             <div class="title ml-5">{{ $t("title.member") }}</div>
-            <ul class="columns">
-                <li v-for="(item, index) in userData" :key="index" class="column ml-5 mr-5">
-                    <div class="card pr-5 pl-5 pb-4 pt-4">
+
+            <ul class="columns is-multiline is-start">
+                <li v-for="(item, index) in userData" :key="index" class="column is-quarter ml-3">
+                    <div class="card pr-4 pl-4 pb-4 pt-4">
                         <img src="https://img.freepik.com/free-icon/user_318-159711.jpg">
                         <div class="mt-4">{{ item.email }}</div>
 
@@ -64,5 +65,14 @@ img{
 .card{
     border-radius: 30px;
     box-shadow: 2px 3px 6px 0 rgba(0, 0, 0, 0.3);
+    width: 230px;
+    margin: 0 20px;
+}
+.card:hover{
+    transform: scale(1.01);
+}
+ul.columns{
+    justify-content: center;
+    padding: 0 80px;
 }
 </style>

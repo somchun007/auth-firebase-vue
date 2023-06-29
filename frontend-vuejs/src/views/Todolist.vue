@@ -14,11 +14,11 @@
             </div>
         </form>
 
-        <div class="card" v-for="(todo, index) in todos" :key="index" :class="{ 'has-background-primary-light': todo.done }">
+        <div class="card" v-for="(todo, index) in todos" :key="index" :class="{ selectDone: todo.done }">
             <div class="card-content">
                 <div class="content">
                     <div class="columns is-mobile is-vcentered">
-                        <div class="column" :class="{ 'has-text-success line-through': todo.done }">
+                        <div class="column" :class="{ selectDone: todo.done }">
                             {{ todo.content }}
                         </div>
                         <div class="column is-5 has-text-right">
@@ -36,20 +36,25 @@
         </div>
     </div>
 </template>
-  
-<script>
 
+<script>
 import { doc, collection, onSnapshot, addDoc, deleteDoc, updateDoc, getDocs, query, where, orderBy } from "firebase/firestore";
 import { db } from "@/firebase";
+
+import moment from "moment";
+import "moment-timezone";
+moment.locale('th');
+
 const dbCollection = collection(db, "todos");
-  
+
 export default {
     name: "app",
     data() {
       return {
         message: "",
         todos: [],
-      };
+        time: "",
+    };
     },
     computed:{
         haveUser(){
@@ -62,13 +67,14 @@ export default {
         }
 
         const q = query(dbCollection, orderBy("time", "desc"));
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        onSnapshot(q, (querySnapshot) => {
             const result = [];
             querySnapshot.forEach((doc) => {
                  const todo = {
                     id: doc.id,
                     content: doc.data().content,
                     done: doc.data().done,
+                    time: doc.data().time,
                 };
                 result.push(todo);
             });
@@ -79,14 +85,10 @@ export default {
   
     methods: {
         onAdd() {
-        // this.todos.push({
-        //   id: uuidv4(),
-        //   content: this.message,
-        //   done: false
-        // });
             addDoc(dbCollection, {
                 content: this.message,
                 done: false,
+                time: moment().valueOf(),
             });
             this.message = "";
         },
@@ -127,5 +129,11 @@ export default {
 .card{
     border-radius: 10px;
     box-shadow: 2px 3px 6px 0 rgba(0, 0, 0, 0.3);
+}
+.selectDone{
+    background-color: lightgoldenrodyellow;
+    text-decoration: line-through ;
+    color: rgb(4, 136, 4);
+    /* 'has-text-success line-through' */
 }
 </style>

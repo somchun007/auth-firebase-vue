@@ -9,10 +9,33 @@ const {v4 : uuidv4} = require('uuid');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+exports.websay = async (req,res) => {
+    const token = req.body.accessToken;
+    console.log(token);
+    if (!token) {
+        res.status(403).send({ message: "ไม่มี Token!" });
+    }
+    else{
+        jwt.verify(token, 'secret', (err, decode) => {
+            if(err){
+                return res.status(200).send({ message: "Token  หมดอายุแล้ว" });
+            }
+            var tokenNew = jwt.sign({email: user.email}, 'secret', {
+                expiresIn: '60',
+            })
+            user.accessToken = tokenNew;
+            return res.status(200).send({user: user})
+        })
+    }
+}
+
 exports.signup = async (req, res) => {
     const { username, password, email, firstname, lastname } = req.body;
     const snapshot = await db.collection('user').where('email', '==', email).get();
 
+    if(!(username && password && email && firstname && lastname)){
+        return res.status(400).send({ status: "failed", message: "ใส่รายละเอียดไม่ครบถ้วน!" });
+    }
     if (snapshot.empty) {
         var addData = {
             username: username,
@@ -59,7 +82,10 @@ exports.signin = async (req, res) =>{
         return res.status(400).send({ status: "failed", message: "รหัสผ่านไม่ถูกต้อง!" });
     }
     else{
-        var token = jwt.sign({email: email}, 'secret', {expiresIn: '30ms'})
+        var token = jwt.sign({email: result[0].email}, 'secret', {
+            expiresIn: '30s'
+        })
+        
         return res.status(200).send({ 
             // status: "ok", 
             username: result[0].username,
@@ -74,6 +100,26 @@ exports.signin = async (req, res) =>{
         });
     }
 }
+
+// exports.refreshToken = (req, res) => {
+//     const token = req.body.user.accessToken;
+//     let user = req.body.user_Login;
+//     if (!token) {
+//       res.status(403).send({ message: "ไม่มี Token!" });
+//     }
+//     else{
+//         jwt.verify(token, 'secret', (err, decode) => {
+//             if(err){
+//                 return res.status(200).send({ message: "Token  หมดอายุแล้ว" });
+//             }
+//             var tokenNew = jwt.sign({email: user.email}, 'secret', {
+//                 expiresIn: '60',
+//             })
+//             user.accessToken = tokenNew;
+//             return res.status(200).send({user: user})
+//         })
+//     }
+// }
 
 exports.update = async (req, res) =>{
     const uid = req.body.doc_id;
